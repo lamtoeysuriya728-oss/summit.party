@@ -8,7 +8,6 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 
-/* ── SETUP & SUMMARY: scrollable ── */
 body{
   min-height:100vh;
   background:#f5ead0;
@@ -22,32 +21,27 @@ body{
 }
 .scroll-wrap{max-width:960px;margin:0 auto;padding:0 16px 80px;}
 
-/* ── PLAY SCREEN: fixed full viewport, no scroll ── */
+/* ── PLAY SCREEN ── */
 #play-screen{
-  display:none;
-  position:fixed; inset:0;
+  display:none;position:fixed;inset:0;
   background:#f5ead0;
   background-image:
     radial-gradient(ellipse at 20% 10%,#ffe8a0 0%,transparent 50%),
     radial-gradient(ellipse at 80% 90%,#f0d49a 0%,transparent 50%);
-  overflow:hidden;
-  flex-direction:column;
-  padding:10px 14px 0;
-  gap:6px;
+  overflow:hidden;flex-direction:column;
+  padding:8px 12px 0;gap:5px;
 }
-#play-screen.active{ display:flex; }
+#play-screen.active{display:flex;}
 
-/* top bar */
-.play-topbar{
-  display:flex; align-items:center; gap:10px; flex-shrink:0;
-}
+.play-topbar{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .players-progress{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
 .pip{
   padding:5px 14px;border-radius:20px;font-size:11px;letter-spacing:1px;
   border:1px solid #cc220066;color:#cc2200;background:rgba(200,30,0,0.07);
   transition:all .25s;white-space:nowrap;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
 }
-.pip:hover{ background:rgba(200,30,0,0.14); border-color:#cc2200; }
+.pip:hover{background:rgba(200,30,0,0.14);border-color:#cc2200;}
 .pip.active{
   background:linear-gradient(145deg,#a06800,#e8a820);
   border-color:#c8920a;color:#fff;font-weight:bold;cursor:default;
@@ -59,27 +53,25 @@ body{
   text-decoration:line-through;
 }
 
-/* turn header row — single line */
+/* turn header */
 .turn-header-row{
-  display:flex;align-items:center;gap:16px;
+  display:flex;align-items:center;gap:8px;
   background:linear-gradient(160deg,#fffaf0,#fdf3dc);
-  border:2px solid #c8920a;border-radius:10px;padding:8px 20px;
-  box-shadow:0 3px 14px rgba(120,60,0,0.1);flex-shrink:0;
-  flex-wrap:nowrap;overflow:hidden;
+  border:2px solid #c8920a;border-radius:10px;padding:6px 14px;
+  box-shadow:0 3px 14px rgba(120,60,0,0.1);flex-shrink:0;overflow:hidden;
 }
-.turn-label{font-family:'Cinzel Decorative',serif;font-size:clamp(13px,2.5vw,20px);letter-spacing:2px;color:#a07040;white-space:nowrap;flex-shrink:0;}
-.turn-name {font-family:'Cinzel Decorative',serif;font-size:clamp(13px,2.5vw,20px);color:#7a3e00;white-space:nowrap;flex-shrink:0;font-weight:700;}
-.turn-draws{font-family:'Cinzel',serif;font-size:clamp(13px,2.5vw,20px);letter-spacing:1px;color:#b08040;white-space:nowrap;flex-shrink:0;}
-.turn-hint {font-family:'Cinzel',serif;font-size:clamp(13px,2.5vw,20px);letter-spacing:1px;color:#a07040;text-align:right;margin-left:auto;white-space:nowrap;flex-shrink:0;}
+.turn-label{font-family:'Cinzel Decorative',serif;font-size:clamp(10px,2.5vw,20px);letter-spacing:1px;color:#a07040;white-space:nowrap;flex-shrink:0;}
+.turn-name {font-family:'Cinzel Decorative',serif;font-size:clamp(10px,2.5vw,20px);color:#7a3e00;white-space:nowrap;flex-shrink:0;font-weight:700;}
+.turn-draws{font-family:'Cinzel',serif;font-size:clamp(10px,2.5vw,20px);letter-spacing:1px;color:#b08040;white-space:nowrap;flex-shrink:0;}
+.turn-hint{font-family:'Cinzel',serif;font-size:clamp(9px,1.8vw,18px);letter-spacing:1px;color:#a07040;text-align:right;margin-left:auto;white-space:nowrap;flex-shrink:0;}
 
-/* cards grid — flex wrap, auto-sized by JS */
+/* cards grid */
 .cards-grid{
   display:flex;flex-wrap:wrap;gap:8px;
   justify-content:center;align-content:center;
   flex:1;min-height:0;overflow:hidden;
 }
 
-/* card size via CSS var — set by JS */
 .card-wrapper{
   perspective:1000px;
   width:var(--cw,110px);height:var(--ch,165px);
@@ -98,126 +90,91 @@ body{
   transform:rotateY(180deg)!important;
   transition:transform .65s cubic-bezier(.2,.8,.3,1.2)!important;
 }
-.card-wrapper:not(.flipped):not(.pressing):not(.disabled):hover .card-inner{
+.card-wrapper:not(.flipped):not(.disabled):hover .card-inner{
   transform:rotateY(10deg) translateY(-4px);transition:transform .3s ease;
 }
 .card-wrapper.flipped{cursor:default;}
 .card-wrapper.disabled:not(.flipped){opacity:.35;cursor:not-allowed;}
 
-/* ── CARD OVERLAY (zoomed drag-to-reveal) ── */
+/* ── CARD OVERLAY ── */
 #card-overlay{
-  display:none;
-  position:fixed;inset:0;z-index:200;
-  background:rgba(30,10,0,0.75);
-  backdrop-filter:blur(4px);
-  align-items:center;justify-content:center;gap:40px;
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(30,10,0,0.75);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;
+  gap:clamp(16px,4vw,40px);flex-wrap:wrap;
 }
-#card-overlay.active{ display:flex; }
+#card-overlay.active{display:flex;}
 
 #overlay-card{
   position:relative;
-  width:min(38vw,260px);
-  height:min(57vw,390px);
+  width:clamp(140px,38vw,260px);height:clamp(210px,57vw,390px);
   perspective:1200px;
   user-select:none;-webkit-user-select:none;
   animation:overlayPop .35s cubic-bezier(.2,1.3,.4,1) both;
   flex-shrink:0;
 }
-
-/* buttons panel — right of card */
-#overlay-actions{
-  display:none;
-  flex-direction:column;gap:16px;align-items:flex-start;
-  animation:splashPop .4s cubic-bezier(.2,1.3,.4,1) both;
-}
-#overlay-actions.active{ display:flex; }
-#overlay-actions button{
-  width:160px;padding:14px 20px;border:none;border-radius:10px;
-  font-family:'Cinzel',serif;font-weight:700;font-size:15px;letter-spacing:2px;
-  cursor:pointer;transition:transform .15s,box-shadow .15s;
-}
-#overlay-actions button:hover{ transform:translateY(-2px); }
-#btn-confirm{
-  background:linear-gradient(145deg,#a06800,#e8a820);color:#fff;
-  box-shadow:0 5px 18px rgba(160,100,0,.5);
-}
-#btn-reroll{
-  background:linear-gradient(145deg,#6a006a,#b020b0);color:#fff;
-  box-shadow:0 5px 18px rgba(120,0,120,.45);
-}
 @keyframes overlayPop{
   from{transform:scale(.4) translateY(60px);opacity:0;}
-  to  {transform:scale(1)   translateY(0);   opacity:1;}
+  to  {transform:scale(1) translateY(0);opacity:1;}
 }
+
+/* overlay action buttons — right on wide, below on mobile */
+#overlay-actions{
+  display:none;flex-direction:column;gap:14px;align-items:center;
+  animation:splashPop .4s cubic-bezier(.2,1.3,.4,1) both;
+}
+#overlay-actions.active{display:flex;}
+#overlay-actions button{
+  width:clamp(130px,36vw,160px);
+  padding:clamp(10px,2vh,14px) 20px;
+  border:none;border-radius:10px;
+  font-family:'Cinzel',serif;font-weight:700;
+  font-size:clamp(12px,3.5vw,15px);letter-spacing:2px;
+  cursor:pointer;transition:transform .15s,box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+#overlay-actions button:active{transform:scale(.96);}
+#btn-confirm{background:linear-gradient(145deg,#a06800,#e8a820);color:#fff;box-shadow:0 5px 18px rgba(160,100,0,.5);}
+#btn-reroll {background:linear-gradient(145deg,#6a006a,#b020b0);color:#fff;box-shadow:0 5px 18px rgba(120,0,120,.45);}
+
 #overlay-inner{
   position:relative;width:100%;height:100%;
-  transform-style:preserve-3d;
-  transform:rotateY(0deg);
-  transition:none;
+  transform-style:preserve-3d;transform:rotateY(0deg);transition:none;
 }
 #overlay-inner.snap-open{
   transform:rotateY(180deg)!important;
   transition:transform .6s cubic-bezier(.2,.8,.3,1.2)!important;
 }
 
-/* reuse same card-face / card-back / card-front styles but bigger */
-#overlay-card .card-face{ border-radius:18px; }
-#overlay-card .card-back{ border-radius:18px; }
-#overlay-card .card-front{ border-radius:18px; }
-#overlay-card .card-number{font-size:min(18vw,120px);}
-#overlay-card .card-back-label{font-size:min(2vw,14px);letter-spacing:4px;}
-#overlay-card .tl-mark,#overlay-card .br-mark{font-size:min(3vw,22px);}
-#overlay-card .cf-num{font-size:min(3vw,20px);}
-#overlay-card .cf-main{font-size:min(5vw,32px);}
-#overlay-card .cf-main.sm{font-size:min(4vw,26px);}
-#overlay-card .cf-main.xs{font-size:min(3.2vw,20px);}
+#overlay-card .card-face{border-radius:18px;}
+#overlay-card .card-back{border-radius:18px;}
+#overlay-card .card-front{border-radius:18px;}
+#overlay-card .card-number{font-size:clamp(60px,18vw,120px);}
+#overlay-card .card-back-label{font-size:clamp(9px,2vw,14px);letter-spacing:4px;}
+#overlay-card .tl-mark,#overlay-card .br-mark{font-size:clamp(14px,3vw,22px);}
+#overlay-card .cf-num{font-size:clamp(12px,3vw,20px);}
+#overlay-card .cf-main{font-size:clamp(16px,5vw,32px);}
+#overlay-card .cf-main.sm{font-size:clamp(13px,4vw,26px);}
+#overlay-card .cf-main.xs{font-size:clamp(11px,3.2vw,20px);}
 
-/* drag hint arrow */
 #drag-hint{
   position:absolute;bottom:-48px;left:50%;transform:translateX(-50%);
   color:rgba(255,220,100,.85);font-size:13px;letter-spacing:2px;
   font-family:'Cinzel',serif;text-align:center;pointer-events:none;
   animation:hintBob .9s ease-in-out infinite alternate;
 }
-@keyframes hintBob{from{transform:translateX(-50%) translateY(0)}to{transform:translateX(-50%) translateY(-6px)}}
+@keyframes hintBob{
+  from{transform:translateX(-50%) translateY(0)}
+  to  {transform:translateX(-50%) translateY(-6px)}
+}
 
-/* flash on overlay */
 #overlay-flash{
   position:absolute;inset:0;border-radius:18px;
   background:radial-gradient(circle,rgba(255,220,100,.9) 0%,transparent 65%);
   opacity:0;pointer-events:none;z-index:10;
 }
 #overlay-card.flash-anim #overlay-flash{animation:flashReveal .55s ease-out forwards;}
-  content:'';position:absolute;inset:-3px;border-radius:15px;
-  border:2px solid transparent;pointer-events:none;z-index:10;transition:all .2s;
-}
-.card-wrapper.pressing::after{
-  border-color:rgba(200,146,10,.85);
-  animation:pulseRing .5s ease-in-out infinite alternate;
-}
-@keyframes pulseRing{
-  from{box-shadow:0 0 12px rgba(200,146,10,.4);}
-  to  {box-shadow:0 0 26px rgba(200,146,10,.85),0 0 50px rgba(200,146,10,.3);}
-}
 
-/* progress ring */
-.card-progress{
-  position:absolute;inset:0;border-radius:12px;
-  pointer-events:none;z-index:20;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .15s;
-}
-.card-wrapper.pressing .card-progress{opacity:1;}
-.progress-ring{transform:rotate(-90deg);}
-.progress-ring circle.track{fill:none;stroke:rgba(0,0,0,.1);stroke-width:5;}
-.progress-ring circle.fill{
-  fill:none;stroke:#c8920a;stroke-width:5;stroke-linecap:round;
-  stroke-dasharray:107;stroke-dashoffset:107;
-  transition:stroke-dashoffset .05s linear;
-  filter:drop-shadow(0 0 4px rgba(200,146,10,.9));
-}
-
-/* flash */
 .card-flash{
   position:absolute;inset:0;border-radius:12px;
   background:radial-gradient(circle,rgba(255,220,100,.85) 0%,transparent 70%);
@@ -226,8 +183,8 @@ body{
 .card-wrapper.flash-anim .card-flash{animation:flashReveal .5s ease-out forwards;}
 @keyframes flashReveal{
   0%  {opacity:.85;transform:scale(.5);}
-  60% {opacity:.5; transform:scale(1.1);}
-  100%{opacity:0;  transform:scale(1.3);}
+  60% {opacity:.5;transform:scale(1.1);}
+  100%{opacity:0;transform:scale(1.3);}
 }
 
 .card-face{
@@ -236,8 +193,6 @@ body{
   border-radius:12px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;overflow:hidden;
 }
-
-/* CARD BACK */
 .card-back{
   background:linear-gradient(160deg,#ffffff,#f5f0e8);
   border:2px solid #c8920a;
@@ -249,20 +204,19 @@ body{
 }
 .card-number{
   font-family:'Cinzel Decorative',serif;
-  font-size:calc(var(--cw,110px) * 0.5);
+  font-size:calc(var(--cw,110px)*0.5);
   font-weight:700;color:#c8920a;
   text-shadow:2px 3px 0 rgba(120,60,0,.2);
   line-height:1;position:relative;z-index:1;
 }
 .card-back-label{
-  font-size:calc(var(--cw,110px) * 0.07);
+  font-size:calc(var(--cw,110px)*0.07);
   letter-spacing:3px;color:#c8a050;margin-top:5px;
   position:relative;z-index:1;font-family:'Cinzel',serif;
 }
 .card-back .tl-mark{position:absolute;top:7px;left:9px;font-family:'Cinzel Decorative',serif;font-size:calc(var(--cw,110px)*.11);color:#c8920a;opacity:.5;}
 .card-back .br-mark{position:absolute;bottom:7px;right:9px;font-family:'Cinzel Decorative',serif;font-size:calc(var(--cw,110px)*.11);color:#c8920a;opacity:.5;transform:rotate(180deg);}
 
-/* CARD FRONT */
 .card-front{
   transform:rotateY(180deg);
   border:2px solid var(--accent-border);
@@ -276,7 +230,6 @@ body{
 }
 .card-front.decoy{background:linear-gradient(160deg,#fff8f5,#fff0e8);border-color:#cc4400;}
 .card-front.decoy::before{border-color:#cc4400;opacity:.28;}
-
 .cf-num{
   position:absolute;top:7px;left:9px;
   font-family:'Cinzel Decorative',serif;
@@ -284,15 +237,13 @@ body{
   color:var(--accent-color);opacity:.6;
 }
 .cf-main{
-  font-family:'Cinzel',serif;
-  font-size:calc(var(--cw,110px)*.13);
+  font-family:'Cinzel',serif;font-size:calc(var(--cw,110px)*.13);
   font-weight:700;text-align:center;color:#2a1400;
   line-height:1.3;padding:0 8px;letter-spacing:.3px;
 }
-.cf-main.sm {font-size:calc(var(--cw,110px)*.11);}
-.cf-main.xs {font-size:calc(var(--cw,110px)*.09);}
+.cf-main.sm{font-size:calc(var(--cw,110px)*.11);}
+.cf-main.xs{font-size:calc(var(--cw,110px)*.09);}
 .cf-main.decoy-text{color:#8B1a00;}
-.card-suit-bot{font-size:calc(var(--cw,110px)*.13);opacity:.35;position:absolute;bottom:8px;}
 
 /* bottom action bar */
 .play-actions{
@@ -300,7 +251,6 @@ body{
   padding-bottom:46px;
 }
 
-/* result banner slim */
 .result-banner{
   background:linear-gradient(145deg,rgba(200,146,10,.15),rgba(200,146,10,.05));
   border:2px solid #c8920a;border-radius:12px;padding:10px 18px;
@@ -308,15 +258,11 @@ body{
 }
 .result-banner p{font-family:'Cinzel Decorative',serif;font-size:clamp(11px,2vw,14px);letter-spacing:2px;color:#7a3e00;}
 
-/* ── SETUP & SUMMARY shared styles ── */
+/* setup & summary */
 .header{text-align:center;padding:32px 16px 18px;}
 .header-icon{font-size:48px;display:block;animation:float 3s ease-in-out infinite;}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.header h1{
-  font-family:'Cinzel Decorative',serif;
-  font-size:clamp(20px,4.5vw,34px);letter-spacing:4px;color:#7a3e00;
-  text-shadow:1px 2px 0 rgba(255,200,80,.5);margin-top:10px;
-}
+.header h1{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,4.5vw,34px);letter-spacing:4px;color:#7a3e00;text-shadow:1px 2px 0 rgba(255,200,80,.5);margin-top:10px;}
 .header p{color:#a07040;font-size:11px;letter-spacing:4px;margin-top:8px;}
 
 .panel{
@@ -325,119 +271,60 @@ body{
   box-shadow:0 6px 28px rgba(120,60,0,.14);
   position:relative;margin-bottom:13px;
 }
-.panel::before{
-  content:'';position:absolute;inset:7px;
-  border:1px solid rgba(200,146,10,.22);border-radius:10px;pointer-events:none;
-}
-.section-label{
-  font-size:10px;letter-spacing:4px;color:#9a6010;
-  text-transform:uppercase;margin-bottom:12px;
-  display:flex;align-items:center;gap:8px;
-}
+.panel::before{content:'';position:absolute;inset:7px;border:1px solid rgba(200,146,10,.22);border-radius:10px;pointer-events:none;}
+.section-label{font-size:10px;letter-spacing:4px;color:#9a6010;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#c8920a55,transparent);}
 
 .tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
-.tag{
-  display:inline-flex;align-items:center;gap:5px;
-  background:rgba(200,146,10,.1);border:1px solid #c8920a88;
-  padding:5px 11px;border-radius:20px;font-size:13px;color:#7a4000;
-}
+.tag{display:inline-flex;align-items:center;gap:5px;background:rgba(200,146,10,.1);border:1px solid #c8920a88;padding:5px 11px;border-radius:20px;font-size:13px;color:#7a4000;}
 .tag.decoy-tag{background:rgba(180,60,0,.08);border-color:#cc440088;color:#8B2000;}
 .tag .del{background:none;border:none;color:#c07030;cursor:pointer;font-size:16px;line-height:1;padding:0;}
 .tag .del:hover{color:#cc2200;}
 
 .input-row{display:flex;gap:10px;}
-.input-row input{
-  flex:1;background:#fffdf5;border:1px solid #c8920a88;
-  color:#3a1a00;padding:10px 14px;border-radius:8px;
-  font-family:'Georgia',serif;font-size:14px;outline:none;transition:border-color .2s;
-}
+.input-row input{flex:1;background:#fffdf5;border:1px solid #c8920a88;color:#3a1a00;padding:10px 14px;border-radius:8px;font-family:'Georgia',serif;font-size:14px;outline:none;transition:border-color .2s;}
 .input-row input:focus{border-color:#c8920a;}
 .input-row input::placeholder{color:#c8a870;}
 
 .players-list{display:flex;flex-direction:column;gap:9px;margin-bottom:12px;}
-.player-row{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  background:rgba(200,146,10,.06);border:1px solid #c8920a55;
-  border-radius:10px;padding:10px 14px;
-}
+.player-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(200,146,10,.06);border:1px solid #c8920a55;border-radius:10px;padding:10px 14px;}
 .player-num{font-family:'Cinzel Decorative',serif;font-size:18px;color:#c8920a;min-width:24px;text-align:center;}
-.player-name-inp{
-  flex:1;min-width:110px;background:#fffdf5;border:1px solid #c8920a66;
-  color:#3a1a00;padding:8px 12px;border-radius:7px;
-  font-family:'Georgia',serif;font-size:14px;outline:none;
-}
+.player-name-inp{flex:1;min-width:110px;background:#fffdf5;border:1px solid #c8920a66;color:#3a1a00;padding:8px 12px;border-radius:7px;font-family:'Georgia',serif;font-size:14px;outline:none;}
 .player-name-inp:focus{border-color:#c8920a;}
 .draws-ctrl{display:flex;align-items:center;gap:7px;}
 .draws-label{font-size:10px;letter-spacing:2px;color:#9a6010;white-space:nowrap;}
-.mini-btn{
-  width:28px;height:28px;border:none;border-radius:6px;
-  background:linear-gradient(145deg,#a06800,#e8a820);
-  color:#fff;font-size:16px;font-weight:bold;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 8px rgba(160,100,0,.25);transition:all .15s;
-}
+.mini-btn{width:28px;height:28px;border:none;border-radius:6px;background:linear-gradient(145deg,#a06800,#e8a820);color:#fff;font-size:16px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(160,100,0,.25);transition:all .15s;}
 .mini-btn:hover{transform:translateY(-1px);}
 .draws-num{font-family:'Cinzel Decorative',serif;font-size:20px;color:#8B4A00;min-width:24px;text-align:center;}
 .del-player{background:none;border:none;color:#c07030;cursor:pointer;font-size:20px;padding:0;}
 .del-player:hover{color:#cc2200;}
 
-/* buttons */
-.btn-gold{
-  background:linear-gradient(145deg,#a06800,#e8a820,#a06800);
-  border:none;color:#fff;padding:10px 22px;border-radius:8px;
-  font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:2px;
-  cursor:pointer;box-shadow:0 4px 14px rgba(160,100,0,.3);transition:all .2s;white-space:nowrap;
-}
+.btn-gold{background:linear-gradient(145deg,#a06800,#e8a820,#a06800);border:none;color:#fff;padding:10px 22px;border-radius:8px;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:2px;cursor:pointer;box-shadow:0 4px 14px rgba(160,100,0,.3);transition:all .2s;white-space:nowrap;}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(160,100,0,.45);}
-.btn-ghost{
-  background:rgba(255,250,240,.85);border:1px solid #c8920a88;
-  color:#8B5000;padding:10px 20px;border-radius:8px;
-  font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .2s;white-space:nowrap;
-}
+.btn-ghost{background:rgba(255,250,240,.85);border:1px solid #c8920a88;color:#8B5000;padding:10px 20px;border-radius:8px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .2s;white-space:nowrap;}
 .btn-ghost:hover{background:rgba(200,146,10,.12);border-color:#c8920a;}
-.btn-red{
-  background:linear-gradient(145deg,#8B1a00,#cc3300,#8B1a00);
-  border:none;color:#fff;padding:10px 22px;border-radius:8px;
-  font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:2px;
-  cursor:pointer;box-shadow:0 4px 14px rgba(160,40,0,.3);transition:all .2s;white-space:nowrap;
-}
+.btn-red{background:linear-gradient(145deg,#8B1a00,#cc3300,#8B1a00);border:none;color:#fff;padding:10px 22px;border-radius:8px;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:2px;cursor:pointer;box-shadow:0 4px 14px rgba(160,40,0,.3);transition:all .2s;white-space:nowrap;}
 .btn-red:hover{transform:translateY(-2px);}
-.start-btn{
-  display:block;width:100%;margin-top:4px;
-  background:linear-gradient(145deg,#8B4800,#d4820a,#8B4800);
-  border:none;color:#fff;padding:16px;border-radius:10px;
-  font-family:'Cinzel Decorative',serif;font-size:16px;letter-spacing:4px;cursor:pointer;
-  box-shadow:0 6px 26px rgba(140,80,0,.35);transition:all .25s;
-  position:relative;overflow:hidden;
-}
-.start-btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
-  transform:translateX(-100%);transition:transform .5s;
-}
+.start-btn{display:block;width:100%;margin-top:4px;background:linear-gradient(145deg,#8B4800,#d4820a,#8B4800);border:none;color:#fff;padding:16px;border-radius:10px;font-family:'Cinzel Decorative',serif;font-size:16px;letter-spacing:4px;cursor:pointer;box-shadow:0 6px 26px rgba(140,80,0,.35);transition:all .25s;position:relative;overflow:hidden;}
+.start-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transform:translateX(-100%);transition:transform .5s;}
 .start-btn:hover::before{transform:translateX(100%);}
 .start-btn:hover{transform:translateY(-2px);}
 
-/* fullscreen btn */
+/* fullscreen btn — above ticker */
 #fs-btn{
-  position:fixed;bottom:14px;right:14px;z-index:500;
+  position:fixed;bottom:50px;right:14px;z-index:500;
   background:rgba(200,146,10,.9);border:none;border-radius:50%;
   width:42px;height:42px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 3px 14px rgba(0,0,0,.25);transition:all .2s;font-size:18px;
-  color:#fff;
+  box-shadow:0 3px 14px rgba(0,0,0,.25);transition:all .2s;font-size:18px;color:#fff;
 }
 #fs-btn:hover{background:#c8920a;transform:scale(1.1);}
 
-/* ══ CONFETTI CANVAS ══ */
+/* confetti */
 #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:400;}
 
-/* ══ REWARD SPLASH ══ */
-#reward-splash{
-  display:none;position:fixed;inset:0;z-index:350;
-  align-items:center;justify-content:center;pointer-events:none;
-}
+/* reward splash */
+#reward-splash{display:none;position:fixed;inset:0;z-index:350;align-items:center;justify-content:center;pointer-events:none;}
 #reward-splash.active{display:flex;}
 #reward-splash-inner{text-align:center;animation:splashPop .55s cubic-bezier(.2,1.4,.4,1) both;}
 @keyframes splashPop{
@@ -457,13 +344,12 @@ body{
   to  {text-shadow:0 4px 40px rgba(255,220,100,1),0 0 100px rgba(255,255,100,.7);}
 }
 
-/* ══ NEWS TICKER ══ */
+/* news ticker */
 #news-ticker{
   position:fixed;bottom:0;left:0;right:0;z-index:300;height:38px;
   background:linear-gradient(90deg,rgba(80,20,0,.93),rgba(120,50,0,.93),rgba(80,20,0,.93));
   border-top:2px solid #c8920a;overflow:hidden;display:none;
-  box-shadow:0 -3px 20px rgba(0,0,0,.35);
-  align-items:center;
+  box-shadow:0 -3px 20px rgba(0,0,0,.35);align-items:center;
 }
 #news-ticker.active{display:flex;}
 #ticker-track{display:inline-flex;gap:0;white-space:nowrap;animation:tickerScroll 35s linear infinite;}
@@ -481,34 +367,19 @@ body{
   color:#fff;padding:18px 34px;border-radius:16px;
   font-family:'Cinzel Decorative',serif;font-size:clamp(18px,4vw,28px);letter-spacing:3px;
   text-align:center;pointer-events:none;z-index:999;
-  box-shadow:0 8px 40px rgba(160,30,0,.5);
-  opacity:0;transition:none;
+  box-shadow:0 8px 40px rgba(160,30,0,.5);opacity:0;transition:none;
 }
-#bonus-toast.show{
-  animation:toastPop .8s cubic-bezier(.2,1.4,.4,1) forwards,toastFade .4s ease-in 1.4s forwards;
-}
+#bonus-toast.show{animation:toastPop .8s cubic-bezier(.2,1.4,.4,1) forwards,toastFade .4s ease-in 1.4s forwards;}
 @keyframes toastPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes toastFade{from{opacity:1}to{opacity:0}}
 
 /* summary */
-.summary-card{
-  background:linear-gradient(160deg,#fffaf0,#fdf3dc);
-  border:2px solid #c8920a;border-radius:14px;padding:16px 20px;
-  margin-bottom:12px;box-shadow:0 4px 14px rgba(120,60,0,.1);
-}
-.summary-player{
-  font-family:'Cinzel Decorative',serif;font-size:14px;color:#7a3e00;
-  margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-}
-.summary-badge{
-  font-size:10px;letter-spacing:1px;color:#a07040;
-  background:rgba(200,146,10,.12);border:1px solid #c8920a66;
-  padding:2px 10px;border-radius:12px;font-family:'Cinzel',serif;
-}
+.summary-card{background:linear-gradient(160deg,#fffaf0,#fdf3dc);border:2px solid #c8920a;border-radius:14px;padding:16px 20px;margin-bottom:12px;box-shadow:0 4px 14px rgba(120,60,0,.1);}
+.summary-player{font-family:'Cinzel Decorative',serif;font-size:14px;color:#7a3e00;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.summary-badge{font-size:10px;letter-spacing:1px;color:#a07040;background:rgba(200,146,10,.12);border:1px solid #c8920a66;padding:2px 10px;border-radius:12px;font-family:'Cinzel',serif;}
 .summary-items{display:flex;flex-wrap:wrap;gap:7px;}
 .summary-item{background:rgba(200,146,10,.12);border:1px solid #c8920a88;padding:4px 12px;border-radius:16px;font-size:13px;color:#5a3000;}
 .summary-item.decoy{background:rgba(180,40,0,.08);border-color:#cc440088;color:#8B1a00;}
-
 .action-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
 
 ::-webkit-scrollbar{width:5px;}
@@ -519,18 +390,13 @@ body{
 <body>
 
 <canvas id="confetti-canvas"></canvas>
-
 <div id="reward-splash">
   <div id="reward-splash-inner">
     <div class="splash-label">✦ &nbsp; รางวัลของคุณ &nbsp; ✦</div>
     <div class="splash-text" id="splash-text"></div>
   </div>
 </div>
-
-<div id="news-ticker">
-  <div id="ticker-track"></div>
-</div>
-
+<div id="news-ticker"><div id="ticker-track"></div></div>
 <div id="bonus-toast"></div>
 <button id="fs-btn" onclick="toggleFullscreen()" title="เต็มจอ">⛶</button>
 
@@ -542,7 +408,6 @@ body{
     <h1>SUMMIT CLUB</h1>
     <p>⚓ &nbsp; กลุ่มการตลาด โซน 2 &nbsp; ⚓</p>
   </div>
-
   <div class="panel">
     <div class="section-label">การ์ดรางวัล (<span id="item-count">0</span> ใบ)</div>
     <div class="tags" id="tags-container"></div>
@@ -551,7 +416,6 @@ body{
       <button class="btn-gold" onclick="addItem()">เพิ่ม</button>
     </div>
   </div>
-
   <div class="panel">
     <div class="section-label">การ์ดหลอก (<span id="decoy-count">0</span> ใบ) — เปิดแล้วได้สิทธิ์เพิ่ม</div>
     <div class="tags" id="decoy-tags"></div>
@@ -568,44 +432,37 @@ body{
       <button class="btn-red" onclick="addDecoy()">เพิ่ม</button>
     </div>
   </div>
-
   <div class="panel">
     <div class="section-label">ผู้เล่น &amp; สิทธิ์เปิดการ์ด</div>
     <div class="players-list" id="players-list"></div>
     <button class="btn-ghost" onclick="addPlayer()" style="width:100%;margin-top:4px">+ เพิ่มผู้เล่น / ฝ่าย</button>
   </div>
-
   <button class="start-btn" onclick="startGame()">เริ่มเกม!</button>
 </div>
 </div>
 
-<!-- ══ PLAY (fixed fullscreen flex) ══ -->
+<!-- ══ PLAY ══ -->
 <div id="play-screen">
-  <div style="text-align:center;flex-shrink:0;padding:4px 0 2px;">
+  <div style="text-align:center;flex-shrink:0;padding:2px 0 1px;">
     <img src="https://img5.pic.in.th/file/secure-sv1/Red-White-Bold-Gladiator-Logo101.md-Photoroom.png"
-         style="height:clamp(48px,8vh,90px);width:auto;object-fit:contain;mix-blend-mode:multiply;display:block;margin:0 auto 2px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 3px 8px rgba(120,60,0,.25));" />
-    <div style="font-family:'Cinzel Decorative',serif;font-size:clamp(16px,3.2vw,32px);letter-spacing:5px;color:#7a3e00;text-shadow:1px 2px 0 rgba(255,200,80,.5);line-height:1.1;">SUMMIT CLUB</div>
-    <div style="font-size:clamp(9px,1.2vw,13px);letter-spacing:4px;color:#a07040;margin-top:2px;">⚓ &nbsp;กลุ่มการตลาด โซน 2; ⚓</div>
+         style="height:clamp(32px,6vh,90px);width:auto;object-fit:contain;mix-blend-mode:multiply;display:block;margin:0 auto 1px;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 3px 8px rgba(120,60,0,.25));" />
+    <div style="font-family:'Cinzel Decorative',serif;font-size:clamp(11px,3.2vw,32px);letter-spacing:clamp(2px,1vw,5px);color:#7a3e00;text-shadow:1px 2px 0 rgba(255,200,80,.5);line-height:1.1;">SUMMIT CLUB</div>
+    <div style="font-size:clamp(7px,1.2vw,13px);letter-spacing:clamp(1px,.8vw,4px);color:#a07040;margin-top:1px;">⚓ กลุ่มการตลาด โซน 2 ⚓</div>
   </div>
-
   <div class="play-topbar">
     <div class="players-progress" id="players-progress"></div>
     <button class="btn-ghost" onclick="goSetup()" style="font-size:10px;padding:6px 12px">⚙ ตั้งค่า</button>
   </div>
-
   <div class="turn-header-row">
     <span class="turn-label">✦ ตาของ</span>
     <span class="turn-name" id="turn-name"></span>
     <span class="turn-draws" id="turn-draws"></span>
     <span class="turn-hint" id="cards-hint"></span>
   </div>
-
   <div class="cards-grid" id="cards-grid"></div>
-
   <div class="result-banner" id="result-banner" style="display:none">
     <p id="result-text"></p>
   </div>
-
   <div class="play-actions">
     <button class="btn-ghost" id="reveal-all-btn" onclick="revealAll()" style="display:none">เฉลยทั้งหมด</button>
     <button class="btn-gold"  id="next-btn" onclick="nextTurn()" style="display:none">ถัดไป ➜</button>
@@ -653,57 +510,32 @@ body{
 
 <script>
 // ══ DATA ══
-let allItems   = [];
-let decoyItems = [];   // [{text, bonus}]
-let players    = [];
-let currentTurn= 0;
-
-let deckForTurn = [];
-let flippedState= [];
-let flippedCount= 0;
-let maxFlips    = 0;
-let results     = [];
-
-const SCREENS = ['setup','play','summary'];
-let currentScreen = 'setup';
+let allItems=[], decoyItems=[], players=[], currentTurn=0;
+let deckForTurn=[], flippedState=[], flippedCount=0, maxFlips=0, results=[];
+let currentScreen='setup';
+const SK='pirateCardDraw_zone2';
 
 // ══ PERSIST ══
-const SK = 'pirateCardDraw_v2';
 function save(){
-  const snap = {
-    allItems, decoyItems, players,
-    screen: currentScreen,
-    currentTurn, flippedCount, maxFlips,
-    deckForTurn, flippedState, results,
-    newDecoyBonus
-  };
-  try{ localStorage.setItem(SK, JSON.stringify(snap)); }catch(e){}
+  try{ localStorage.setItem(SK,JSON.stringify({allItems,decoyItems,players,screen:currentScreen,currentTurn,flippedCount,maxFlips,deckForTurn,flippedState,results,newDecoyBonus})); }catch(e){}
 }
 function load(){
   try{
-    const raw = localStorage.getItem(SK);
-    if(!raw) return false;
-    const s = JSON.parse(raw);
-    allItems    = s.allItems    || [];
-    decoyItems  = s.decoyItems  || [];
-    players     = s.players     || [];
-    currentTurn = s.currentTurn || 0;
-    flippedCount= s.flippedCount|| 0;
-    maxFlips    = s.maxFlips    || 0;
-    deckForTurn = s.deckForTurn || [];
-    flippedState= s.flippedState|| [];
-    results     = s.results     || [];
-    newDecoyBonus = s.newDecoyBonus || 1;
-    currentScreen = s.screen || 'setup';
+    const s=JSON.parse(localStorage.getItem(SK)||'null');
+    if(!s) return false;
+    allItems=s.allItems||[]; decoyItems=s.decoyItems||[]; players=s.players||[];
+    currentTurn=s.currentTurn||0; flippedCount=s.flippedCount||0; maxFlips=s.maxFlips||0;
+    deckForTurn=s.deckForTurn||[]; flippedState=s.flippedState||[]; results=s.results||[];
+    newDecoyBonus=s.newDecoyBonus||1; currentScreen=s.screen||'setup';
     return true;
-  }catch(e){ return false; }
+  }catch(e){return false;}
 }
 
 function showScreen(name){
-  currentScreen = name;
-  document.getElementById('setup-screen').style.display   = name==='setup'   ? 'block':'none';
-  document.getElementById('play-screen').classList.toggle ('active', name==='play');
-  document.getElementById('summary-screen').style.display = name==='summary' ? 'block':'none';
+  currentScreen=name;
+  document.getElementById('setup-screen').style.display  =name==='setup'  ?'block':'none';
+  document.getElementById('play-screen').classList.toggle('active',name==='play');
+  document.getElementById('summary-screen').style.display=name==='summary'?'block':'none';
   save();
 }
 
@@ -725,57 +557,34 @@ function playReveal() {[330,415,523,659].forEach((f,k)=>setTimeout(()=>playTone(
 function playDecoy()  {[220,196].forEach((f,i)=>setTimeout(()=>playTone(f,.25,'sawtooth',.18),i*120));}
 function playWin()    {[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.3,'sine',.22),i*100));}
 
-// ══ HELPERS ══
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 // ══ SETUP: ITEMS ══
 function renderItems(){
-  document.getElementById('tags-container').innerHTML=
-    allItems.map((it,i)=>`<div class="tag">${escHtml(it)}<button class="del" onclick="removeItem(${i})">×</button></div>`).join('');
-  document.getElementById('item-count').textContent=allItems.length;
-  save();
+  document.getElementById('tags-container').innerHTML=allItems.map((it,i)=>`<div class="tag">${escHtml(it)}<button class="del" onclick="removeItem(${i})">×</button></div>`).join('');
+  document.getElementById('item-count').textContent=allItems.length;save();
 }
-function addItem(){
-  const inp=document.getElementById('new-item-input');
-  const v=inp.value.trim();if(!v)return;
-  allItems.push(v);inp.value='';renderItems();
-}
+function addItem(){const inp=document.getElementById('new-item-input');const v=inp.value.trim();if(!v)return;allItems.push(v);inp.value='';renderItems();}
 function removeItem(i){allItems.splice(i,1);renderItems();}
 document.getElementById('new-item-input').addEventListener('keydown',e=>{if(e.key==='Enter')addItem();});
 
 // ══ SETUP: DECOYS ══
 let newDecoyBonus=1;
-function changeNewDecoyBonus(d){
-  newDecoyBonus=Math.max(1,newDecoyBonus+d);
-  document.getElementById('new-decoy-bonus').textContent=newDecoyBonus;
-}
+function changeNewDecoyBonus(d){newDecoyBonus=Math.max(1,newDecoyBonus+d);document.getElementById('new-decoy-bonus').textContent=newDecoyBonus;}
 function renderDecoys(){
-  document.getElementById('decoy-tags').innerHTML=
-    decoyItems.map((it,i)=>`
-      <div class="tag decoy-tag">${escHtml(it.text)}
-        <span style="font-size:10px;background:rgba(180,40,0,.15);border-radius:10px;padding:1px 7px;margin-left:2px;color:#8B1a00">+${it.bonus}</span>
-        <button class="del" onclick="removeDecoy(${i})">×</button>
-      </div>`).join('');
-  document.getElementById('decoy-count').textContent=decoyItems.length;
-  save();
+  document.getElementById('decoy-tags').innerHTML=decoyItems.map((it,i)=>`<div class="tag decoy-tag">${escHtml(it.text)}<span style="font-size:10px;background:rgba(180,40,0,.15);border-radius:10px;padding:1px 7px;margin-left:2px;color:#8B1a00">+${it.bonus}</span><button class="del" onclick="removeDecoy(${i})">×</button></div>`).join('');
+  document.getElementById('decoy-count').textContent=decoyItems.length;save();
 }
-function addDecoy(){
-  const inp=document.getElementById('new-decoy-input');
-  const v=inp.value.trim();if(!v)return;
-  decoyItems.push({text:v,bonus:newDecoyBonus});inp.value='';renderDecoys();
-}
+function addDecoy(){const inp=document.getElementById('new-decoy-input');const v=inp.value.trim();if(!v)return;decoyItems.push({text:v,bonus:newDecoyBonus});inp.value='';renderDecoys();}
 function removeDecoy(i){decoyItems.splice(i,1);renderDecoys();}
 document.getElementById('new-decoy-input').addEventListener('keydown',e=>{if(e.key==='Enter')addDecoy();});
 
 // ══ SETUP: PLAYERS ══
 function renderPlayers(){
-  document.getElementById('players-list').innerHTML=
-    players.map((p,i)=>`
+  document.getElementById('players-list').innerHTML=players.map((p,i)=>`
     <div class="player-row">
       <span class="player-num">${i+1}</span>
-      <input class="player-name-inp" value="${escHtml(p.name)}"
-             oninput="players[${i}].name=this.value;save()"
-             placeholder="ชื่อผู้เล่น / ฝ่าย" />
+      <input class="player-name-inp" value="${escHtml(p.name)}" oninput="players[${i}].name=this.value;save()" placeholder="ชื่อผู้เล่น / ฝ่าย" />
       <div class="draws-ctrl">
         <span class="draws-label">สิทธิ์</span>
         <button class="mini-btn" onclick="changeDraws(${i},-1)">−</button>
@@ -783,120 +592,81 @@ function renderPlayers(){
         <button class="mini-btn" onclick="changeDraws(${i},1)">+</button>
       </div>
       <button class="del-player" onclick="removePlayer(${i})">×</button>
-    </div>`).join('');
-  save();
+    </div>`).join('');save();
 }
 function addPlayer(){players.push({name:`ฝ่ายที่ ${players.length+1}`,draws:3});renderPlayers();}
 function removePlayer(i){players.splice(i,1);renderPlayers();}
-function changeDraws(i,d){
-  players[i].draws=Math.max(1,players[i].draws+d);
-  document.getElementById(`pdraws-${i}`).textContent=players[i].draws;
-  save();
-}
+function changeDraws(i,d){players[i].draws=Math.max(1,players[i].draws+d);document.getElementById(`pdraws-${i}`).textContent=players[i].draws;save();}
 
 // ══ FULLSCREEN ══
 function toggleFullscreen(){
   const el=document.documentElement;
-  if(!document.fullscreenElement){
-    (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen).call(el);
-    document.getElementById('fs-btn').textContent='✕';
-  } else {
-    (document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen).call(document);
-    document.getElementById('fs-btn').textContent='⛶';
-  }
+  if(!document.fullscreenElement){(el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen).call(el);document.getElementById('fs-btn').textContent='✕';}
+  else{(document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen).call(document);document.getElementById('fs-btn').textContent='⛶';}
 }
-document.addEventListener('fullscreenchange',()=>{
-  if(!document.fullscreenElement) document.getElementById('fs-btn').textContent='⛶';
-});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.getElementById('fs-btn').textContent='⛶';});
 
-// ══ CARD SIZING — best fit, auto cols ══
+// ══ CARD SIZING ══
 function calcCardSize(count){
-  const grid = document.getElementById('cards-grid');
-  const gRect = grid.getBoundingClientRect();
-  const W = gRect.width  || window.innerWidth  - 28;
-  const H = gRect.height || window.innerHeight * 0.55;
-  const GAP = 8;
-  const RATIO = 1.5;
-
-  let best = {w:40, h:60};
-  for(let cols=1; cols<=count; cols++){
-    const rows = Math.ceil(count/cols);
-    const cw = Math.floor((W-(cols-1)*GAP)/cols);
-    const ch_max = Math.floor((H-(rows-1)*GAP)/rows);
-    const cw_fit = Math.min(cw, Math.floor(ch_max/RATIO));
-    const ch_fit = Math.floor(cw_fit*RATIO);
-    if(cw_fit > best.w){ best={w:cw_fit, h:ch_fit}; }
+  const grid=document.getElementById('cards-grid');
+  const r=grid.getBoundingClientRect();
+  const W=r.width||window.innerWidth-28;
+  const H=r.height||window.innerHeight*0.55;
+  const GAP=8,RATIO=1.5;
+  let best={w:40,h:60};
+  for(let cols=1;cols<=count;cols++){
+    const rows=Math.ceil(count/cols);
+    const cw=Math.floor((W-(cols-1)*GAP)/cols);
+    const ch_max=Math.floor((H-(rows-1)*GAP)/rows);
+    const cw_fit=Math.min(cw,Math.floor(ch_max/RATIO));
+    const ch_fit=Math.floor(cw_fit*RATIO);
+    if(cw_fit>best.w) best={w:cw_fit,h:ch_fit};
   }
-  best.w = Math.min(best.w, 160);
-  best.h = Math.min(best.h, 240);
+  best.w=Math.min(best.w,160);best.h=Math.min(best.h,240);
   return best;
 }
-
-function applyCardSize(count){
-  const {w,h}=calcCardSize(count);
-  document.documentElement.style.setProperty('--cw',w+'px');
-  document.documentElement.style.setProperty('--ch',h+'px');
-}
+function applyCardSize(count){const{w,h}=calcCardSize(count);document.documentElement.style.setProperty('--cw',w+'px');document.documentElement.style.setProperty('--ch',h+'px');}
 
 // ══ START ══
 function startGame(){
   if(allItems.length===0){alert('กรุณาเพิ่มการ์ดรางวัลก่อนนะ!');return;}
-  if(players.length===0) {alert('กรุณาเพิ่มผู้เล่นก่อนนะ!');return;}
+  if(players.length===0){alert('กรุณาเพิ่มผู้เล่นก่อนนะ!');return;}
   results=players.map(p=>({name:p.name,draws:p.draws,items:[]}));
-  currentTurn=0;
-  showScreen('play');
-  startTurn();
+  currentTurn=0;showScreen('play');startTurn();
 }
 
 // ══ TURN ══
 function startTurn(){
-  const p=players[currentTurn];
-  maxFlips=p.draws;
-
+  const p=players[currentTurn];maxFlips=p.draws;
   const rewardCards=allItems.map(t=>({text:t,isDecoy:false,bonus:0}));
-  const decoyCards =decoyItems.map(d=>({text:d.text,isDecoy:true,bonus:d.bonus}));
+  const decoyCards=decoyItems.map(d=>({text:d.text,isDecoy:true,bonus:d.bonus}));
   deckForTurn=[...rewardCards,...decoyCards].sort(()=>Math.random()-.5);
-
-  flippedState=new Array(deckForTurn.length).fill(false);
-  flippedCount=0;
-
+  flippedState=new Array(deckForTurn.length).fill(false);flippedCount=0;
   playShuffle();
   document.getElementById('turn-name').textContent=p.name;
   document.getElementById('result-banner').style.display='none';
   document.getElementById('reveal-all-btn').style.display='none';
   document.getElementById('next-btn').style.display='none';
-
-  renderPips();
-  renderCards();
-  // wait for layout then size cards
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      applyCardSize(deckForTurn.length);
-      updateHint();
-      setTimeout(attachCardEvents,80);
-      save();
-    });
-  });
+  renderPips();renderCards();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    applyCardSize(deckForTurn.length);updateHint();setTimeout(attachCardEvents,80);save();
+  }));
 }
 
 function renderPips(){
-  document.getElementById('players-progress').innerHTML=
-    players.map((p,i)=>{
-      if(i===currentTurn) return `<div class="pip active">${escHtml(p.name)}</div>`;
-      if(i<currentTurn)  return `<div class="pip done">${escHtml(p.name)} ✓</div>`;
-      // pending — clickable to jump to this player's turn
-      return `<div class="pip" onclick="jumpToTurn(${i})">${escHtml(p.name)}</div>`;
-    }).join('');
+  document.getElementById('players-progress').innerHTML=players.map((p,i)=>{
+    if(i===currentTurn) return `<div class="pip active">${escHtml(p.name)}</div>`;
+    if(i<currentTurn)   return `<div class="pip done">${escHtml(p.name)} ✓</div>`;
+    return `<div class="pip" onclick="jumpToTurn(${i})">${escHtml(p.name)}</div>`;
+  }).join('');
 }
 
 function jumpToTurn(i){
-  if(i<=currentTurn) return; // can't go back or re-do current
-  // fill skipped players with empty results
-  while(currentTurn < i){
+  if(i<=currentTurn) return;
+  while(currentTurn<i){
     currentTurn++;
     if(!results[currentTurn]) results[currentTurn]={name:players[currentTurn].name,draws:players[currentTurn].draws,items:[]};
   }
-  pressTimers={};
   document.getElementById('result-banner').style.display='none';
   document.getElementById('next-btn').style.display='none';
   startTurn();
@@ -909,266 +679,163 @@ const THEMES=[
   {bc:'#bf360c',ac:'#8B1a00'},{bc:'#00695c',ac:'#004d40'},
 ];
 function renderCards(){
-  document.getElementById('cards-grid').innerHTML=
-    deckForTurn.map((card,i)=>{
-      const th=THEMES[i%THEMES.length];
-      const ab=card.isDecoy?'#cc4400':th.bc;
-      const ac=card.isDecoy?'#8B1a00':th.ac;
-      const len=card.text.length;
-      const sz=len>20?'xs':len>10?'sm':'';
-      const df=card.isDecoy?'decoy':'';
-      const dt=card.isDecoy?'decoy-text':'';
-      return `
-      <div class="card-wrapper" id="card-${i}" style="animation-delay:${i*70}ms">
-        <div class="card-flash"></div>
-        <div class="card-inner" id="inner-${i}">
-          <div class="card-face card-back">
-            <span class="tl-mark">${i+1}</span>
-            <span class="card-number">${i+1}</span>
-            <span class="card-back-label">CARD</span>
-            <span class="br-mark">${i+1}</span>
-          </div>
-          <div class="card-face card-front ${df}" style="--accent-border:${ab};--accent-color:${ac}">
-            <span class="cf-num">${i+1}</span>
-            <span class="cf-main ${sz} ${dt}">${escHtml(card.text)}</span>
-          </div>
+  document.getElementById('cards-grid').innerHTML=deckForTurn.map((card,i)=>{
+    const th=THEMES[i%THEMES.length];
+    const ab=card.isDecoy?'#cc4400':th.bc;const ac=card.isDecoy?'#8B1a00':th.ac;
+    const len=card.text.length;const sz=len>20?'xs':len>10?'sm':'';
+    const df=card.isDecoy?'decoy':'';const dt=card.isDecoy?'decoy-text':'';
+    return `<div class="card-wrapper" id="card-${i}" style="animation-delay:${i*70}ms">
+      <div class="card-flash"></div>
+      <div class="card-inner" id="inner-${i}">
+        <div class="card-face card-back">
+          <span class="tl-mark">${i+1}</span>
+          <span class="card-number">${i+1}</span>
+          <span class="card-back-label">CARD</span>
+          <span class="br-mark">${i+1}</span>
         </div>
-      </div>`;
-    }).join('');
+        <div class="card-face card-front ${df}" style="--accent-border:${ab};--accent-color:${ac}">
+          <span class="cf-num">${i+1}</span>
+          <span class="cf-main ${sz} ${dt}">${escHtml(card.text)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-// restore flipped state (after page refresh mid-turn)
 function restoreFlipped(){
   deckForTurn.forEach((_,i)=>{
-    if(flippedState[i]){
-      const el=document.getElementById(`card-${i}`);
-      if(el){ el.classList.add('flipped'); el.style.animationDuration='0s'; }
-    }
+    if(flippedState[i]){const el=document.getElementById(`card-${i}`);if(el){el.classList.add('flipped');el.style.animationDuration='0s';}}
   });
-  // re-disable if quota was full
   if(flippedCount>=maxFlips){
-    deckForTurn.forEach((_,j)=>{
-      if(!flippedState[j]){
-        const ej=document.getElementById(`card-${j}`);
-        if(ej) ej.classList.add('disabled');
-      }
-    });
+    deckForTurn.forEach((_,j)=>{if(!flippedState[j]){const ej=document.getElementById(`card-${j}`);if(ej)ej.classList.add('disabled');}});
   }
 }
 
 // ══ CONFETTI ══
-const confCanvas = document.getElementById('confetti-canvas');
-const confCtx    = confCanvas.getContext('2d');
-let confParticles = [];
-let confRAF = null;
-
-function resizeConf(){ confCanvas.width=innerWidth; confCanvas.height=innerHeight; }
-window.addEventListener('resize', resizeConf); resizeConf();
-
-function launchConfetti(x, y){
+const confCanvas=document.getElementById('confetti-canvas');
+const confCtx=confCanvas.getContext('2d');
+let confParticles=[],confRAF=null;
+function resizeConf(){confCanvas.width=innerWidth;confCanvas.height=innerHeight;}
+window.addEventListener('resize',resizeConf);resizeConf();
+function launchConfetti(){
   resizeConf();
   const COLORS=['#ffd700','#ff6b6b','#4ecdc4','#45b7d1','#f9ca24','#f0932b','#eb4d4b','#6ab04c','#e056fd','#fff'];
   for(let i=0;i<160;i++){
-    const ang = (Math.random()*Math.PI*2);
-    const spd = 4 + Math.random()*10;
-    confParticles.push({
-      x: x ?? innerWidth/2, y: y ?? innerHeight*0.45,
-      vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd - 6,
-      w: 6+Math.random()*8, h: 4+Math.random()*6,
-      rot: Math.random()*360, rotV: (Math.random()-0.5)*10,
-      color: COLORS[Math.floor(Math.random()*COLORS.length)],
-      alpha:1, life:1
-    });
+    const ang=Math.random()*Math.PI*2,spd=4+Math.random()*10;
+    confParticles.push({x:innerWidth/2,y:innerHeight*0.45,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd-6,w:6+Math.random()*8,h:4+Math.random()*6,rot:Math.random()*360,rotV:(Math.random()-.5)*10,color:COLORS[Math.floor(Math.random()*COLORS.length)],alpha:1,life:1});
   }
   if(!confRAF) animConf();
 }
-
 function animConf(){
   confCtx.clearRect(0,0,confCanvas.width,confCanvas.height);
-  confParticles = confParticles.filter(p=>p.alpha>0.02);
+  confParticles=confParticles.filter(p=>p.alpha>0.02);
   confParticles.forEach(p=>{
-    p.vy += 0.25; p.vx *= 0.99;
-    p.x += p.vx; p.y += p.vy;
-    p.rot += p.rotV;
-    p.life -= 0.012; p.alpha = Math.max(0, p.life);
-    confCtx.save();
-    confCtx.globalAlpha = p.alpha;
-    confCtx.translate(p.x, p.y);
-    confCtx.rotate(p.rot*Math.PI/180);
-    confCtx.fillStyle = p.color;
-    confCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-    confCtx.restore();
+    p.vy+=0.25;p.vx*=0.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.rotV;
+    p.life-=0.012;p.alpha=Math.max(0,p.life);
+    confCtx.save();confCtx.globalAlpha=p.alpha;confCtx.translate(p.x,p.y);confCtx.rotate(p.rot*Math.PI/180);
+    confCtx.fillStyle=p.color;confCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);confCtx.restore();
   });
   if(confParticles.length>0) confRAF=requestAnimationFrame(animConf);
-  else { confRAF=null; confCtx.clearRect(0,0,confCanvas.width,confCanvas.height); }
+  else{confRAF=null;confCtx.clearRect(0,0,confCanvas.width,confCanvas.height);}
 }
 
 // ══ REWARD SPLASH ══
-function showRewardSplash(text, onDone){
-  document.getElementById('splash-text').textContent = text;
-  const el = document.getElementById('reward-splash');
-  el.classList.add('active');
+function showRewardSplash(text,onDone){
+  document.getElementById('splash-text').textContent=text;
+  document.getElementById('reward-splash').classList.add('active');
   launchConfetti();
-  setTimeout(()=>{
-    el.classList.remove('active');
-    if(onDone) onDone();
-  }, 2200);
+  setTimeout(()=>{document.getElementById('reward-splash').classList.remove('active');if(onDone)onDone();},2200);
 }
 
 // ══ NEWS TICKER ══
-let tickerHistory = []; // [{team, text, isDecoy}]
-
-function addTickerItem(team, text, isDecoy){
-  tickerHistory.push({team, text, isDecoy});
-  updateTicker();
-}
-
+let tickerHistory=[];
+function addTickerItem(team,text,isDecoy){tickerHistory.push({team,text,isDecoy});updateTicker();}
 function updateTicker(){
-  if(tickerHistory.length===0) return;
-  const ticker = document.getElementById('news-ticker');
-  ticker.classList.add('active');
-
-  // build items × 2 for seamless loop
-  const items = [...tickerHistory, ...tickerHistory];
-  document.getElementById('ticker-track').innerHTML = items.map(h=>`
-    <span class="ticker-item">
-      <span class="ticker-team">${escHtml(h.team)}</span>
-      <span style="color:#c8920a">›</span>
-      <span class="${h.isDecoy?'ticker-decoy':'ticker-reward'}">${escHtml(h.text)}${h.isDecoy?' 🎭':' ⭐'}</span>
-      <span class="ticker-sep">❖</span>
-    </span>`).join('');
-
-  // adjust speed based on content length
-  const totalW = document.getElementById('ticker-track').scrollWidth / 2;
-  const speed  = Math.max(20, totalW / 80); // seconds
-  document.getElementById('ticker-track').style.animationDuration = speed+'s';
+  if(!tickerHistory.length) return;
+  document.getElementById('news-ticker').classList.add('active');
+  const items=[...tickerHistory,...tickerHistory];
+  document.getElementById('ticker-track').innerHTML=items.map(h=>`<span class="ticker-item"><span class="ticker-team">${escHtml(h.team)}</span><span style="color:#c8920a">›</span><span class="${h.isDecoy?'ticker-decoy':'ticker-reward'}">${escHtml(h.text)}${h.isDecoy?' 🎭':' ⭐'}</span><span class="ticker-sep">❖</span></span>`).join('');
+  const spd=Math.max(20,document.getElementById('ticker-track').scrollWidth/2/80);
+  document.getElementById('ticker-track').style.animationDuration=spd+'s';
 }
+function clearTicker(){tickerHistory=[];document.getElementById('news-ticker').classList.remove('active');document.getElementById('ticker-track').innerHTML='';}
 
-function clearTicker(){
-  tickerHistory=[];
-  document.getElementById('news-ticker').classList.remove('active');
-  document.getElementById('ticker-track').innerHTML='';
-}
-let overlayCardIndex = -1;
-let dragStartY = 0;
-let dragStartX = 0;
-let dragPct = 0;
-let overlayRevealed = false;
-let isDragging = false;
+// ══ DRAG-TO-REVEAL OVERLAY ══
+let overlayCardIndex=-1,dragStartY=0,dragStartX=0,dragPct=0,overlayRevealed=false,isDragging=false;
 
 function openOverlay(i){
-  if(flippedState[i]) return;
-  if(flippedCount>=maxFlips) return;
-  overlayCardIndex = i;
-  overlayRevealed = false;
-  dragPct = 0;
-  isDragging = false;
-
-  const card = deckForTurn[i];
-  const num = i+1;
-  const len = card.text.length;
-  const szCls = len>20?'xs':len>10?'sm':'';
-
-  // populate back
-  document.getElementById('ov-num-tl').textContent = num;
-  document.getElementById('ov-num').textContent    = num;
-  document.getElementById('ov-num-br').textContent = num;
-
-  // populate front
-  const ab = card.isDecoy ? '#cc4400' : '#c8920a';
-  const ac = card.isDecoy ? '#8B1a00' : '#8B5E00';
-  const front = document.getElementById('ov-front');
-  front.style.setProperty('--accent-border', ab);
-  front.style.setProperty('--accent-color',  ac);
-  front.className = 'card-face card-front' + (card.isDecoy?' decoy':'');
-  document.getElementById('ov-cf-num').textContent  = num;
-  const mainEl = document.getElementById('ov-cf-main');
-  mainEl.textContent = card.text;
-  mainEl.className   = 'cf-main ' + szCls + (card.isDecoy?' decoy-text':'');
-
-  // reset inner rotation
-  const inner = document.getElementById('overlay-inner');
-  inner.classList.remove('snap-open');
-  inner.style.transform = 'rotateY(0deg)';
-  inner.style.transition = 'none';
-
+  if(flippedState[i]||flippedCount>=maxFlips) return;
+  overlayCardIndex=i;overlayRevealed=false;dragPct=0;isDragging=false;
+  const card=deckForTurn[i],num=i+1,len=card.text.length;
+  const szCls=len>20?'xs':len>10?'sm':'';
+  document.getElementById('ov-num-tl').textContent=num;
+  document.getElementById('ov-num').textContent=num;
+  document.getElementById('ov-num-br').textContent=num;
+  const ab=card.isDecoy?'#cc4400':'#c8920a';
+  const ac=card.isDecoy?'#8B1a00':'#8B5E00';
+  const front=document.getElementById('ov-front');
+  front.style.setProperty('--accent-border',ab);
+  front.style.setProperty('--accent-color',ac);
+  front.className='card-face card-front'+(card.isDecoy?' decoy':'');
+  document.getElementById('ov-cf-num').textContent=num;
+  const mainEl=document.getElementById('ov-cf-main');
+  mainEl.textContent=card.text;
+  mainEl.className='cf-main '+szCls+(card.isDecoy?' decoy-text':'');
+  const inner=document.getElementById('overlay-inner');
+  inner.classList.remove('snap-open');inner.style.transform='rotateY(0deg)';inner.style.transition='none';
   document.getElementById('drag-hint').style.opacity='1';
   document.getElementById('overlay-actions').classList.remove('active');
   document.getElementById('card-overlay').classList.add('active');
 }
 
-function onOverlayDragTouch(e){
-  if(!isDragging) return;
-  e.preventDefault();
-  onOverlayMove(e.touches[0].clientX, e.touches[0].clientY);
+function onOverlayMove(cx,cy){
+  if(overlayRevealed||!isDragging) return;
+  const dy=dragStartY-cy,dx=cx-dragStartX;
+  const drag=Math.max(dy,dx*0.6);
+  dragPct=Math.max(0,Math.min(1,drag/120));
+  const inner=document.getElementById('overlay-inner');
+  inner.style.transition='none';inner.style.transform=`rotateY(${dragPct*180}deg)`;
+  document.getElementById('drag-hint').style.opacity=String(Math.max(0,1-dragPct*2));
+  if(dragPct>=1) finishReveal();
 }
-
-function onOverlayMove(cx, cy){
-  if(overlayRevealed || !isDragging) return;
-  const dy = dragStartY - cy;   // positive = dragged up
-  const dx = cx - dragStartX;   // positive = dragged right
-  const drag = Math.max(dy, dx * 0.6);
-  const DRAG_DIST = 120;
-  dragPct = Math.max(0, Math.min(1, drag / DRAG_DIST));
-
-  const inner = document.getElementById('overlay-inner');
-  inner.style.transition = 'none';
-  inner.style.transform  = `rotateY(${dragPct * 180}deg)`;
-  document.getElementById('drag-hint').style.opacity = String(Math.max(0, 1 - dragPct * 2));
-
-  if(dragPct >= 1) finishReveal();
-}
-
-function onOverlayMouseMove(e){ onOverlayMove(e.clientX, e.clientY); }
+function onOverlayMouseMove(e){onOverlayMove(e.clientX,e.clientY);}
+function onOverlayDragTouch(e){if(!isDragging)return;e.preventDefault();onOverlayMove(e.touches[0].clientX,e.touches[0].clientY);}
 
 function onOverlayRelease(){
-  if(!isDragging) return;
-  isDragging = false;
+  if(!isDragging) return;isDragging=false;
   if(overlayRevealed) return;
-
-  if(dragPct >= 0.52){
-    finishReveal();
-  } else {
-    const inner = document.getElementById('overlay-inner');
-    inner.style.transition = 'transform .35s cubic-bezier(.2,.8,.3,1)';
-    inner.style.transform  = 'rotateY(0deg)';
-    dragPct = 0;
+  if(dragPct>=0.52) finishReveal();
+  else{
+    const inner=document.getElementById('overlay-inner');
+    inner.style.transition='transform .35s cubic-bezier(.2,.8,.3,1)';
+    inner.style.transform='rotateY(0deg)';dragPct=0;
     document.getElementById('drag-hint').style.opacity='1';
   }
 }
 
 function finishReveal(){
-  if(overlayRevealed) return;
-  overlayRevealed = true;
-
-  const inner = document.getElementById('overlay-inner');
+  if(overlayRevealed) return;overlayRevealed=true;
+  const inner=document.getElementById('overlay-inner');
   inner.classList.add('snap-open');
   document.getElementById('drag-hint').style.opacity='0';
-
-  const card = deckForTurn[overlayCardIndex];
-  card.isDecoy ? playDecoy() : playReveal();
-
-  const oc = document.getElementById('overlay-card');
-  setTimeout(()=>{ oc.classList.add('flash-anim'); },300);
-  setTimeout(()=>{ oc.classList.remove('flash-anim'); }, 900);
-
-  setTimeout(()=>{
-    document.getElementById('overlay-actions').classList.add('active');
-  }, 700);
+  const card=deckForTurn[overlayCardIndex];
+  card.isDecoy?playDecoy():playReveal();
+  const oc=document.getElementById('overlay-card');
+  setTimeout(()=>{oc.classList.add('flash-anim');},300);
+  setTimeout(()=>{oc.classList.remove('flash-anim');},900);
+  setTimeout(()=>{document.getElementById('overlay-actions').classList.add('active');},700);
 }
 
 function confirmReveal(){
   document.getElementById('overlay-actions').classList.remove('active');
-  const card = deckForTurn[overlayCardIndex];
-  const playerName = players[currentTurn].name;
-
+  const card=deckForTurn[overlayCardIndex];
+  const playerName=players[currentTurn].name;
   closeOverlay();
-
   if(!card.isDecoy){
-    showRewardSplash(card.text, ()=>{ doReveal(overlayCardIndex); });
-    addTickerItem(playerName, card.text, false);
+    showRewardSplash(card.text,()=>{doReveal(overlayCardIndex);});
+    addTickerItem(playerName,card.text,false);
   } else {
-    addTickerItem(playerName, card.text, true);
+    addTickerItem(playerName,card.text,true);
     doReveal(overlayCardIndex);
   }
 }
@@ -1176,115 +843,67 @@ function confirmReveal(){
 function rerollReveal(){
   document.getElementById('overlay-actions').classList.remove('active');
   closeOverlay();
-  const unflipped = deckForTurn.filter((_,i)=>!flippedState[i]);
-  const shuffled  = [...unflipped].sort(()=>Math.random()-.5);
-  let ui=0;
-  deckForTurn = deckForTurn.map((c,i)=> flippedState[i] ? c : shuffled[ui++]);
-  playShuffle();
-  renderCards();
+  const unflipped=deckForTurn.filter((_,i)=>!flippedState[i]);
+  const shuffled=[...unflipped].sort(()=>Math.random()-.5);
+  let ui=0;deckForTurn=deckForTurn.map((c,i)=>flippedState[i]?c:shuffled[ui++]);
+  playShuffle();renderCards();
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    applyCardSize(deckForTurn.length);
-    restoreFlipped();
-    setTimeout(attachCardEvents,80);
+    applyCardSize(deckForTurn.length);restoreFlipped();setTimeout(attachCardEvents,80);
   }));
 }
 
-function closeOverlay(){
-  document.getElementById('card-overlay').classList.remove('active');
-  isDragging = false;
-}
+function closeOverlay(){document.getElementById('card-overlay').classList.remove('active');isDragging=false;}
 
-// Overlay gets mousedown/touchstart to begin drag
-document.getElementById('card-overlay').addEventListener('mousedown', e=>{
+// single overlay mousedown listener
+document.getElementById('card-overlay').addEventListener('mousedown',e=>{
   if(overlayRevealed) return;
-  // backdrop click = close
-  if(e.target === document.getElementById('card-overlay')){
-    closeOverlay(); return;
-  }
-  isDragging = true;
-  dragStartY = e.clientY;
-  dragStartX = e.clientX;
-  dragPct = 0;
+  if(e.target===document.getElementById('card-overlay')){closeOverlay();return;}
+  isDragging=true;dragStartY=e.clientY;dragStartX=e.clientX;dragPct=0;
 });
-document.getElementById('card-overlay').addEventListener('touchstart', e=>{
+document.getElementById('card-overlay').addEventListener('touchstart',e=>{
   if(overlayRevealed) return;
-  isDragging = true;
-  dragStartY = e.touches[0].clientY;
-  dragStartX = e.touches[0].clientX;
-  dragPct = 0;
-}, {passive:true});
+  if(e.target===document.getElementById('card-overlay')){closeOverlay();return;}
+  isDragging=true;dragStartY=e.touches[0].clientY;dragStartX=e.touches[0].clientX;dragPct=0;
+},{passive:true});
 
-document.addEventListener('mousemove', onOverlayMouseMove);
-document.addEventListener('mouseup',   onOverlayRelease);
-document.addEventListener('touchmove', onOverlayDragTouch, {passive:false});
-document.addEventListener('touchend',  onOverlayRelease);
+document.addEventListener('mousemove',onOverlayMouseMove);
+document.addEventListener('mouseup',onOverlayRelease);
+document.addEventListener('touchmove',onOverlayDragTouch,{passive:false});
+document.addEventListener('touchend',onOverlayRelease);
 
 function attachCardEvents(){
   deckForTurn.forEach((_,i)=>{
     const el=document.getElementById(`card-${i}`);
     if(!el||flippedState[i]) return;
-    const onDown=(e)=>{
-      if(flippedState[i]||flippedCount>=maxFlips) return;
-      e.preventDefault();
-      openOverlay(i);
-    };
-    el.addEventListener('mousedown',  onDown);
-    el.addEventListener('touchstart', onDown, {passive:false});
+    const onDown=e=>{if(flippedState[i]||flippedCount>=maxFlips)return;e.preventDefault();openOverlay(i);};
+    el.addEventListener('mousedown',onDown);
+    el.addEventListener('touchstart',onDown,{passive:false});
   });
 }
-
-// close overlay on backdrop click
-document.getElementById('card-overlay').addEventListener('mousedown', e=>{
-  if(e.target===document.getElementById('card-overlay') && !overlayRevealed){
-    closeOverlay();
-  }
-});
 
 function doReveal(i){
   const el=document.getElementById(`card-${i}`);
   if(!el||flippedState[i]) return;
-
-  flippedState[i]=true;
-  flippedCount++;
+  flippedState[i]=true;flippedCount++;
   const card=deckForTurn[i];
   results[currentTurn].items.push(card);
-
   if(card.isDecoy){
     maxFlips+=card.bonus;
-    deckForTurn.forEach((_,j)=>{
-      if(!flippedState[j]){
-        const ej=document.getElementById(`card-${j}`);
-        if(ej) ej.classList.remove('disabled');
-      }
-    });
-    document.getElementById('turn-draws').textContent=`สิทธิ์ ${flippedCount}/${maxFlips}  (+${card.bonus} โบนัส!)`;
+    deckForTurn.forEach((_,j)=>{if(!flippedState[j]){const ej=document.getElementById(`card-${j}`);if(ej)ej.classList.remove('disabled');}});
     showBonusToast(card.bonus);
   }
-
   el.classList.add('flipped');
-
   if(flippedCount>=maxFlips){
-    deckForTurn.forEach((_,j)=>{
-      if(!flippedState[j]){
-        const ej=document.getElementById(`card-${j}`);
-        if(ej) ej.classList.add('disabled');
-      }
-    });
+    deckForTurn.forEach((_,j)=>{if(!flippedState[j]){const ej=document.getElementById(`card-${j}`);if(ej)ej.classList.add('disabled');}});
   }
-
-  updateHint();
-  save();
-  checkTurnDone();
+  updateHint();save();checkTurnDone();
 }
 
-function checkTurnDone(){
-  if(flippedCount>=maxFlips) setTimeout(showTurnResult,450);
-}
+function checkTurnDone(){if(flippedCount>=maxFlips) setTimeout(showTurnResult,450);}
 
 function showTurnResult(){
   playWin();
-  const p=players[currentTurn];
-  const isLast=currentTurn>=players.length-1;
+  const p=players[currentTurn],isLast=currentTurn>=players.length-1;
   const rc=results[currentTurn].items.filter(x=>!x.isDecoy).length;
   const dc=results[currentTurn].items.filter(x=>x.isDecoy).length;
   let txt=`${p.name} เปิดครบแล้ว!`;
@@ -1302,11 +921,8 @@ function revealAll(){
   deckForTurn.forEach((_,i)=>{
     if(!flippedState[i]){
       setTimeout(()=>{
-        const el=document.getElementById(`card-${i}`);
-        if(!el) return;
-        el.classList.remove('disabled');
-        flippedState[i]=true;
-        el.classList.add('flipped');
+        const el=document.getElementById(`card-${i}`);if(!el)return;
+        el.classList.remove('disabled');flippedState[i]=true;el.classList.add('flipped');
         setTimeout(()=>{el.classList.add('flash-anim');},200);
         setTimeout(()=>{el.classList.remove('flash-anim');},700);
       },i*70);
@@ -1315,11 +931,8 @@ function revealAll(){
 }
 
 function updateHint(){
-  document.getElementById('turn-draws').textContent = `สิทธิ์ ${flippedCount}/${maxFlips}`;
-  document.getElementById('cards-hint').textContent =
-    flippedCount>=maxFlips
-      ? `✨ เปิดครบแล้ว!`
-      : `กดค้างที่การ์ดเพื่อเปิด`;
+  document.getElementById('turn-draws').textContent=`สิทธิ์ ${flippedCount}/${maxFlips}`;
+  document.getElementById('cards-hint').textContent=flippedCount>=maxFlips?'✨ เปิดครบแล้ว!':'กดที่การ์ดแล้วลากขึ้นเพื่อเปิด';
 }
 
 function nextTurn(){
@@ -1329,87 +942,56 @@ function nextTurn(){
   document.getElementById('next-btn').style.display='none';
   startTurn();
 }
+function goSetup(){showScreen('setup');}
 
-function goSetup(){
-  showScreen('setup');
-}
-
-// ══ SUMMARY ══
 function showSummary(){
   showScreen('summary');
-  document.getElementById('summary-list').innerHTML=
-    results.map(r=>`
+  document.getElementById('summary-list').innerHTML=results.map(r=>`
     <div class="summary-card">
       <div class="summary-player">${escHtml(r.name)}<span class="summary-badge">${r.draws} สิทธิ์</span></div>
       <div class="summary-items">
-        ${r.items.length
-          ?r.items.map(it=>`<span class="summary-item${it.isDecoy?' decoy':''}">${escHtml(it.text)}${it.isDecoy?' (หลอก)':''}</span>`).join('')
-          :'<span style="color:#b08040;font-size:13px;font-family:Georgia">ไม่มีรางวัล</span>'}
+        ${r.items.length?r.items.map(it=>`<span class="summary-item${it.isDecoy?' decoy':''}">${escHtml(it.text)}${it.isDecoy?' (หลอก)':''}</span>`).join(''):'<span style="color:#b08040;font-size:13px;font-family:Georgia">ไม่มีรางวัล</span>'}
       </div>
     </div>`).join('');
 }
 
 function showBonusToast(bonus){
   const t=document.getElementById('bonus-toast');
-  t.textContent=`+${bonus} สิทธิ์!`;
-  t.classList.remove('show');
-  void t.offsetWidth;
-  t.classList.add('show');
+  t.textContent=`+${bonus} สิทธิ์!`;t.classList.remove('show');void t.offsetWidth;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2000);
 }
 
 function playAgain(){
   results=players.map(p=>({name:p.name,draws:p.draws,items:[]}));
-  currentTurn=0;
-  clearTicker();
-  showScreen('play');
-  startTurn();
+  currentTurn=0;clearTicker();showScreen('play');startTurn();
 }
-function resetAll(){
-  results=[];currentTurn=0;
-  clearTicker();
-  showScreen('setup');
-}
+function resetAll(){results=[];currentTurn=0;clearTicker();showScreen('setup');}
 
-// resize: re-calc card sizes when window resizes during play
 window.addEventListener('resize',()=>{
-  if(currentScreen==='play' && deckForTurn.length>0){
-    requestAnimationFrame(()=>applyCardSize(deckForTurn.length));
-  }
+  if(currentScreen==='play'&&deckForTurn.length>0) requestAnimationFrame(()=>applyCardSize(deckForTurn.length));
 });
 
-// ══ INIT / RESTORE ══
-const restored = load();
+// ══ INIT ══
+const restored=load();
 if(restored){
-  renderItems(); renderDecoys(); renderPlayers();
+  renderItems();renderDecoys();renderPlayers();
   document.getElementById('new-decoy-bonus').textContent=newDecoyBonus;
-
   if(currentScreen==='play'){
     showScreen('play');
     document.getElementById('turn-name').textContent=players[currentTurn]?.name||'';
-    renderPips();
-    renderCards();
+    renderPips();renderCards();
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      applyCardSize(deckForTurn.length);
-      restoreFlipped();
-      updateHint();
+      applyCardSize(deckForTurn.length);restoreFlipped();updateHint();
       setTimeout(attachCardEvents,80);
-      // re-show result banner if turn was done
-      if(flippedCount>=maxFlips && maxFlips>0) showTurnResult();
+      if(flippedCount>=maxFlips&&maxFlips>0) showTurnResult();
     }));
-  } else if(currentScreen==='summary'){
-    showScreen('summary');
-    showSummary();
-  } else {
-    showScreen('setup');
-  }
+  } else if(currentScreen==='summary'){showScreen('summary');showSummary();}
+  else showScreen('setup');
 } else {
-  // defaults
   allItems=["สมบัติทองคำ","แผนที่ลับ","ขวดรัม","นกแก้ว","ปืนคาบศิลา","กระดูกไขว้","เรือใบ","ดาบคัตลาส"];
   decoyItems=[{text:"ยังไม่ใช่นะ!",bonus:1},{text:"โชคไม่ดี เลือกใหม่ 2 ใบ!",bonus:2}];
   players=[{name:'ฝ่ายที่ 1',draws:3},{name:'ฝ่ายที่ 2',draws:2}];
-  renderItems(); renderDecoys(); renderPlayers();
-  showScreen('setup');
+  renderItems();renderDecoys();renderPlayers();showScreen('setup');
 }
 </script>
 </body>
